@@ -5,7 +5,7 @@ pragma solidity ^0.8.10;
 
  Twitter: 0xVousk
 
- /!\ Don't forget to approve the use of your NFT for this contract 
+ /!\ Don't forget to approve the use of your NFT for this contract.
 
 **/
 
@@ -52,7 +52,7 @@ contract Auction {
 
         nft = _nft;
         nftId = _nftId;
-        nft.transferFrom(msg.sender, address(this), nftId);
+        nft.transferFrom(msg.sender, address(this), nftId); /** The contract receive your NFT. **/
 
         started = true;
         endAt = block.timestamp + amountOfDays;
@@ -67,7 +67,7 @@ contract Auction {
 
         highestBidder = msg.sender;
         highestBid = msg.value;
-        if (highestBidder != address(0)) { /** If the highest bidder isn't the address 0x000.., increment the highest bid **/
+        if (highestBidder != address(0)) { /** If the highest bidder isn't the address 0x000.., increment the highest bid. **/
             bids[highestBidder] += highestBid;
         }
         emit Bid(highestBidder, highestBid);
@@ -93,12 +93,12 @@ contract Auction {
         require(block.timestamp >= endAt, "Auction is still ongoing");
         require(!ended, "Auction already ended.");
 
-        if (highestBidder != address(0)) { /** If no one placed a bid, the seller get his NFT back. **/
-            nft.transfer(highestBidder, nftId);
-            (bool sent, bytes memory data) = seller.call{value: highestBid}("");
+        if (highestBidder != address(0)) { 
+            nft.transfer(highestBidder, nftId); /** The highest bidder gets his NFT. **/
+            (bool sent, bytes memory data) = seller.call{value: highestBid}(""); /** The seller gets his money. **/
             require(sent, "Could not interact.");          
         } else {
-            nft.transfer(seller, nftId);
+            nft.transfer(seller, nftId); /** If no one placed a bid, the seller gets his NFT back. **/
         }
         
         ended = true;
